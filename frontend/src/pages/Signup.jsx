@@ -1,10 +1,54 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-import { FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi';
+import {
+  FiEye, FiEyeOff, FiArrowRight,
+  FiUser, FiLock, FiMail, FiAlertCircle,
+} from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi2';
 import './Auth.css';
 
+/* ── Password Strength ──────────────────────────── */
+function getStrength(pwd) {
+  if (!pwd) return { score: 0, label: '', cls: '' };
+  let score = 0;
+  if (pwd.length >= 6)  score++;
+  if (pwd.length >= 10) score++;
+  if (/[A-Z]/.test(pwd)) score++;
+  if (/\d/.test(pwd))    score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+  if (score <= 1) return { score: 1, label: 'Weak',   cls: 'weak'   };
+  if (score === 2) return { score: 2, label: 'Fair',   cls: 'fair'   };
+  if (score === 3) return { score: 3, label: 'Good',   cls: 'good'   };
+  return             { score: 4, label: 'Strong', cls: 'strong' };
+}
+
+function StrengthBar({ password }) {
+  const { score, label, cls } = useMemo(() => getStrength(password), [password]);
+  if (!password) return null;
+
+  const barClasses = ['', '', '', ''].map((_, i) => {
+    const activeCls =
+      cls === 'weak'   ? 'active-weak'   :
+      cls === 'fair'   ? 'active-fair'   :
+      cls === 'good'   ? 'active-good'   :
+      'active-strong';
+    return `strength-bar ${i < score ? activeCls : ''}`;
+  });
+
+  return (
+    <div className="password-strength">
+      <div className="strength-bars">
+        {barClasses.map((c, i) => <div key={i} className={c}></div>)}
+      </div>
+      <span className={`strength-label ${cls}`}>{label} password</span>
+    </div>
+  );
+}
+
+/* ── Signup Page ─────────────────────────────────── */
 export default function Signup() {
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -63,132 +107,170 @@ export default function Signup() {
   return (
     <div className="auth-page">
       <div className="auth-bg-noise"></div>
-      
+
       <main className="auth-main">
-        <div className="auth-container" style={{ maxWidth: '32rem' }}>
+        <div className="auth-container" style={{ maxWidth: '34rem' }}>
           <div className="auth-container-glow"></div>
-          
+
           <div className="auth-card">
+            {/* Brand Badge */}
+            <div className="auth-brand-badge">
+              <div className="auth-brand-icon">
+                <HiSparkles />
+              </div>
+            </div>
+
             {/* Header */}
             <div className="auth-header">
               <h1 className="auth-title">Create Account</h1>
-              <p className="auth-subtitle">Join Scheme Finder today</p>
+              <p className="auth-subtitle">Join Scheme Finder — it's free</p>
             </div>
+
+            <div className="auth-divider"></div>
 
             {/* Form */}
             <form className="auth-form" onSubmit={handleSubmit} noValidate>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                {/* Username Input */}
+
+              {/* Username + Email row */}
+              <div className="auth-grid-2">
+                {/* Username */}
                 <div className="input-group">
                   <label htmlFor="signup-username">Username</label>
-                  <input
-                    id="signup-username"
-                    name="username"
-                    type="text"
-                    className={`input-field`}
-                    style={errors.username ? { borderColor: '#ba1a1a' } : {}}
-                    placeholder="Choose a username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    autoComplete="username"
-                  />
-                  {errors.username && <span style={{ color: '#ba1a1a', fontSize: '12px' }}>{errors.username}</span>}
+                  <div className="input-icon-wrapper">
+                    <span className="input-icon"><FiUser size={16} /></span>
+                    <input
+                      id="signup-username"
+                      name="username"
+                      type="text"
+                      className={`input-field${errors.username ? ' input-error' : ''}`}
+                      placeholder="Choose a username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      autoComplete="username"
+                    />
+                  </div>
+                  {errors.username && (
+                    <span className="field-error">
+                      <FiAlertCircle size={12} />{errors.username}
+                    </span>
+                  )}
                 </div>
 
-                {/* Email Input */}
+                {/* Email */}
                 <div className="input-group">
                   <label htmlFor="signup-email">Email Address</label>
-                  <input
-                    id="signup-email"
-                    name="email"
-                    type="email"
-                    className={`input-field`}
-                    style={errors.email ? { borderColor: '#ba1a1a' } : {}}
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    autoComplete="email"
-                  />
-                  {errors.email && <span style={{ color: '#ba1a1a', fontSize: '12px' }}>{errors.email}</span>}
+                  <div className="input-icon-wrapper">
+                    <span className="input-icon"><FiMail size={16} /></span>
+                    <input
+                      id="signup-email"
+                      name="email"
+                      type="email"
+                      className={`input-field${errors.email ? ' input-error' : ''}`}
+                      placeholder="you@example.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                      autoComplete="email"
+                    />
+                  </div>
+                  {errors.email && (
+                    <span className="field-error">
+                      <FiAlertCircle size={12} />{errors.email}
+                    </span>
+                  )}
                 </div>
               </div>
 
-              {/* Password Input */}
+              {/* Password */}
               <div className="input-group">
                 <label htmlFor="signup-password">Password</label>
-                <div className="password-input-container">
+                <div className="input-icon-wrapper password-input-container">
+                  <span className="input-icon"><FiLock size={16} /></span>
                   <input
                     id="signup-password"
                     name="password"
                     type={showPassword ? 'text' : 'password'}
-                    className={`input-field`}
-                    style={errors.password ? { borderColor: '#ba1a1a', paddingRight: '2.5rem' } : { paddingRight: '2.5rem' }}
-                    placeholder="Create a password"
+                    className={`input-field${errors.password ? ' input-error' : ''}`}
+                    placeholder="Create a strong password"
                     value={formData.password}
                     onChange={handleChange}
                     autoComplete="new-password"
+                    style={{ paddingRight: '2.75rem' }}
                   />
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="password-toggle-btn"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                    {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
                   </button>
                 </div>
-                {errors.password && <span style={{ color: '#ba1a1a', fontSize: '12px' }}>{errors.password}</span>}
+                {errors.password && (
+                  <span className="field-error">
+                    <FiAlertCircle size={12} />{errors.password}
+                  </span>
+                )}
+                <StrengthBar password={formData.password} />
               </div>
 
-              {/* Confirm Password Input */}
+              {/* Confirm Password */}
               <div className="input-group">
                 <label htmlFor="signup-confirm-password">Confirm Password</label>
-                <div className="password-input-container">
+                <div className="input-icon-wrapper password-input-container">
+                  <span className="input-icon"><FiLock size={16} /></span>
                   <input
                     id="signup-confirm-password"
                     name="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
-                    className={`input-field`}
-                    style={errors.confirmPassword ? { borderColor: '#ba1a1a', paddingRight: '2.5rem' } : { paddingRight: '2.5rem' }}
-                    placeholder="Confirm your password"
+                    className={`input-field${errors.confirmPassword ? ' input-error' : ''}`}
+                    placeholder="Repeat your password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     autoComplete="new-password"
+                    style={{ paddingRight: '2.75rem' }}
                   />
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="password-toggle-btn"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showConfirmPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                    {showConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
                   </button>
                 </div>
-                {errors.confirmPassword && <span style={{ color: '#ba1a1a', fontSize: '12px' }}>{errors.confirmPassword}</span>}
+                {errors.confirmPassword && (
+                  <span className="field-error">
+                    <FiAlertCircle size={12} />{errors.confirmPassword}
+                  </span>
+                )}
               </div>
 
+              {/* Submit Button */}
               <button
                 type="submit"
                 className="auth-submit-btn"
                 disabled={loading}
               >
-                <span>{loading ? 'Creating account...' : 'Sign Up'}</span>
-                {!loading && <FiArrowRight size={18} />}
+                {loading
+                  ? <><span className="btn-spinner"></span><span>Creating account…</span></>
+                  : <><span>Create Account</span><FiArrowRight size={17} /></>
+                }
               </button>
             </form>
 
-            {/* Footer Text */}
+            {/* Footer */}
             <div className="auth-switch">
-              Already have an account? <Link to="/login">Sign In</Link>
+              Already have an account?&nbsp;<Link to="/login">Sign In</Link>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Decorative background elements */}
+      {/* Ambient background orbs */}
       <div className="auth-bg-orbs">
         <div className="auth-bg-orb-1"></div>
         <div className="auth-bg-orb-2"></div>
+        <div className="auth-bg-orb-3"></div>
       </div>
     </div>
   );

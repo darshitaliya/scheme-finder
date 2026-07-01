@@ -61,21 +61,31 @@ export default function MyEligibility() {
     );
   }
 
-  // Parse extra fields safely
   const extraFields = profile.extra_fields 
     ? (typeof profile.extra_fields === 'string' ? JSON.parse(profile.extra_fields) : profile.extra_fields)
     : {};
 
+  const renderValue = (val) => {
+    if (val === 'Yes' || val === true) {
+      return <span className="status-badge status-yes">Yes</span>;
+    }
+    if (val === 'No' || val === false) {
+      return <span className="status-badge status-no">No</span>;
+    }
+    return val || 'N/A';
+  };
+
   return (
     <main id="main-content" className="eligibility-page">
       <div className="container" style={{ maxWidth: '1000px' }}>
-        <header className="page-header animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <div>
-            <h1 className="page-title">My Eligibility Profile</h1>
-            <p className="eligibility-subtitle">The data you submitted to find matching schemes.</p>
+        <header className="page-header animate-fade-in">
+          <div className="eligibility-header-badge" style={{ marginBottom: '1rem' }}>
+            <FiFileText size={12} /> Personal Scheme Data
           </div>
-          <button className="btn btn-outline" onClick={() => navigate('/finder')}>
-            <FiEdit2 size={18} /> Update Data
+          <h1 className="page-title">My Eligibility Profile</h1>
+          <p className="eligibility-subtitle">The data you submitted to find matching schemes.</p>
+          <button className="btn btn-primary" onClick={() => navigate('/finder')} style={{ marginTop: '1.25rem', borderRadius: '12px', background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)', border: 'none', color: '#fff', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)', padding: '0.6rem 1.8rem' }}>
+            <FiEdit2 size={16} /> Update Profile Data
           </button>
         </header>
 
@@ -88,14 +98,32 @@ export default function MyEligibility() {
                 <h3 className="section-title" style={{ fontSize: '1.1rem' }}>Personal Info</h3>
               </div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Full Name:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.full_name}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Date of Birth:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.dob || 'N/A'}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Age:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.age}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Gender:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.gender}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Marital Status:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.marital_status || 'N/A'}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Number of Children:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.num_children ?? 'N/A'}</span></li>
-            </ul>
+            <div className="parameter-grid">
+              <div className="parameter-block">
+                <span className="parameter-label">Full Name</span>
+                <span className="parameter-value">{profile.full_name}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Date of Birth</span>
+                <span className="parameter-value">{extraFields.dob || 'N/A'}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Age</span>
+                <span className="parameter-value">{profile.age}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Gender</span>
+                <span className="parameter-value">{profile.gender}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Marital Status</span>
+                <span className="parameter-value">{extraFields.marital_status || 'N/A'}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Number of Children</span>
+                <span className="parameter-value">{extraFields.num_children ?? 0}</span>
+              </div>
+            </div>
           </div>
 
           {/* Section 2: Location */}
@@ -106,12 +134,24 @@ export default function MyEligibility() {
                 <h3 className="section-title" style={{ fontSize: '1.1rem' }}>Location & Residence</h3>
               </div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <li><strong style={{ color: 'var(--text-muted)' }}>State:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.state}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>District:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.district}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Area Type:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.area_type || 'N/A'}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Housing Status:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.housing_status || 'N/A'}</span></li>
-            </ul>
+            <div className="parameter-grid">
+              <div className="parameter-block">
+                <span className="parameter-label">State</span>
+                <span className="parameter-value">{profile.state}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">District</span>
+                <span className="parameter-value">{profile.district}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Area Type</span>
+                <span className="parameter-value">{extraFields.area_type || 'N/A'}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Housing Status</span>
+                <span className="parameter-value">{extraFields.housing_status || 'N/A'}</span>
+              </div>
+            </div>
           </div>
 
           {/* Section 3: Socio-Economic */}
@@ -122,11 +162,22 @@ export default function MyEligibility() {
                 <h3 className="section-title" style={{ fontSize: '1.1rem' }}>Socio-Economic & Caste</h3>
               </div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Caste Category:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.category}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Minority Status:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.is_minority || 'No'}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Annual Income:</strong> <span style={{ float: 'right', fontWeight: 500 }}>₹{profile.family_income?.toLocaleString() || 'N/A'}</span></li>
-            </ul>
+            <div className="parameter-grid">
+              <div className="parameter-block">
+                <span className="parameter-label">Caste Category</span>
+                <span className="parameter-value">{profile.category}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Minority Status</span>
+                <span className="parameter-value">{renderValue(extraFields.is_minority)}</span>
+              </div>
+              <div className="parameter-block span-2">
+                <span className="parameter-label">Annual Income</span>
+                <span className="parameter-value" style={{ color: '#10B981', fontSize: '1.05rem', fontWeight: 700 }}>
+                  ₹{profile.family_income?.toLocaleString() || 'N/A'}
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Section 4: Disability */}
@@ -137,15 +188,26 @@ export default function MyEligibility() {
                 <h3 className="section-title" style={{ fontSize: '1.1rem' }}>Disability Status</h3>
               </div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Has Disability:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.has_disability ? 'Yes' : 'No'}</span></li>
+            <div className="parameter-grid">
+              <div className="parameter-block span-2">
+                <span className="parameter-label">Has Disability</span>
+                <span className="parameter-value">{renderValue(profile.has_disability)}</span>
+              </div>
               {profile.has_disability ? (
                 <>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Type:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.disability_type}</span></li>
-                  {profile.udid_number && <li><strong style={{ color: 'var(--text-muted)' }}>UDID:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.udid_number}</span></li>}
+                  <div className="parameter-block">
+                    <span className="parameter-label">Type</span>
+                    <span className="parameter-value">{profile.disability_type}</span>
+                  </div>
+                  {profile.udid_number && (
+                    <div className="parameter-block">
+                      <span className="parameter-label">UDID</span>
+                      <span className="parameter-value">{profile.udid_number}</span>
+                    </div>
+                  )}
                 </>
               ) : null}
-            </ul>
+            </div>
           </div>
 
           {/* Section 5: Employment & Profile */}
@@ -156,62 +218,130 @@ export default function MyEligibility() {
                 <h3 className="section-title" style={{ fontSize: '1.1rem' }}>Professional Profile</h3>
               </div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Highest Education:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{profile.education_level || 'N/A'}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Primary Activity / Role:</strong> <span style={{ float: 'right', fontWeight: 600, color: 'var(--color-primary-raw)' }}>{extraFields.primary_role || 'N/A'}</span></li>
+            <div className="parameter-grid">
+              <div className="parameter-block">
+                <span className="parameter-label">Highest Education</span>
+                <span className="parameter-value">{profile.education_level || 'N/A'}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Primary Activity / Role</span>
+                <span className="parameter-value" style={{ color: 'var(--color-primary-raw)', fontWeight: 700 }}>
+                  {extraFields.primary_role || 'N/A'}
+                </span>
+              </div>
               
               {/* Conditional Nested details */}
+              {extraFields.primary_role && extraFields.primary_role !== 'Other' && (
+                <div className="parameter-block nested-section-header">
+                  <span className="nested-title-text">{extraFields.primary_role} Details</span>
+                </div>
+              )}
+
               {extraFields.primary_role === 'Student' && (
                 <>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>School / College:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.student_school_name || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Course / Class:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.student_course_name || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Is Hosteller:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.student_is_hosteller || 'No'}</span></li>
+                  <div className="parameter-block span-2">
+                    <span className="parameter-label">School / College</span>
+                    <span className="parameter-value">{extraFields.student_school_name || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Course / Class</span>
+                    <span className="parameter-value">{extraFields.student_course_name || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Is Hosteller</span>
+                    <span className="parameter-value">{renderValue(extraFields.student_is_hosteller)}</span>
+                  </div>
                 </>
               )}
 
               {extraFields.primary_role === 'Farmer' && (
                 <>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Land Size (Acres):</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.farmer_land_size || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Crop Type:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.farmer_crop_type || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Farmer Category:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.farmer_category || 'N/A'}</span></li>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Land Size (Acres)</span>
+                    <span className="parameter-value">{extraFields.farmer_land_size || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Crop Type</span>
+                    <span className="parameter-value">{extraFields.farmer_crop_type || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block span-2">
+                    <span className="parameter-label">Farmer Category</span>
+                    <span className="parameter-value">{extraFields.farmer_category || 'N/A'}</span>
+                  </div>
                 </>
               )}
 
               {extraFields.primary_role === 'Salaried Employee' && (
                 <>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Employer Sector:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.employee_sector || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Organization:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.employee_org_name || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Monthly Salary:</strong> <span style={{ float: 'right', fontWeight: 500 }}>₹{extraFields.employee_monthly_salary || 'N/A'}</span></li>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Employer Sector</span>
+                    <span className="parameter-value">{extraFields.employee_sector || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Organization</span>
+                    <span className="parameter-value">{extraFields.employee_org_name || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block span-2">
+                    <span className="parameter-label">Monthly Salary</span>
+                    <span className="parameter-value" style={{ color: '#10B981' }}>₹{extraFields.employee_monthly_salary || 'N/A'}</span>
+                  </div>
                 </>
               )}
 
               {extraFields.primary_role === 'Business Owner / Self-Employed' && (
                 <>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Business Sector:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.business_sector || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Annual Turnover:</strong> <span style={{ float: 'right', fontWeight: 500 }}>₹{extraFields.business_turnover || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>GST Registered:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.business_is_gst_registered || 'No'}</span></li>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Business Sector</span>
+                    <span className="parameter-value">{extraFields.business_sector || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Annual Turnover</span>
+                    <span className="parameter-value">₹{extraFields.business_turnover || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block span-2">
+                    <span className="parameter-label">GST Registered</span>
+                    <span className="parameter-value">{renderValue(extraFields.business_is_gst_registered)}</span>
+                  </div>
                 </>
               )}
 
               {extraFields.primary_role === 'Unemployed' && (
                 <>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Duration:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.unemployed_duration || 'N/A'}</span></li>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Exchange Registered:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.unemployed_registered_exchange || 'No'}</span></li>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Duration</span>
+                    <span className="parameter-value">{extraFields.unemployed_duration || 'N/A'}</span>
+                  </div>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Exchange Registered</span>
+                    <span className="parameter-value">{renderValue(extraFields.unemployed_registered_exchange)}</span>
+                  </div>
                 </>
               )}
 
               {extraFields.primary_role === 'Retired / Pensioner' && (
                 <>
-                  <li><strong style={{ color: 'var(--text-muted)' }}>Receives Pension:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.retired_is_pensioner || 'No'}</span></li>
+                  <div className="parameter-block">
+                    <span className="parameter-label">Receives Pension</span>
+                    <span className="parameter-value">{renderValue(extraFields.retired_is_pensioner)}</span>
+                  </div>
                   {extraFields.retired_is_pensioner === 'Yes' && (
-                    <li><strong style={{ color: 'var(--text-muted)' }}>Monthly Pension:</strong> <span style={{ float: 'right', fontWeight: 500 }}>₹{extraFields.retired_pension_amount || 'N/A'}</span></li>
+                    <div className="parameter-block">
+                      <span className="parameter-label">Monthly Pension</span>
+                      <span className="parameter-value" style={{ color: '#10B981' }}>₹{extraFields.retired_pension_amount || 'N/A'}</span>
+                    </div>
                   )}
                 </>
               )}
 
-              <li><strong style={{ color: 'var(--text-muted)' }}>Is Ex-Serviceman:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.is_ex_serviceman || 'No'}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Is Senior Citizen:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.is_senior_citizen || 'No'}</span></li>
-            </ul>
+              <div className="parameter-block">
+                <span className="parameter-label">Is Ex-Serviceman</span>
+                <span className="parameter-value">{renderValue(extraFields.is_ex_serviceman)}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Is Senior Citizen</span>
+                <span className="parameter-value">{renderValue(extraFields.is_senior_citizen)}</span>
+              </div>
+            </div>
           </div>
 
           {/* Section 6: Documents & Interests */}
@@ -222,34 +352,40 @@ export default function MyEligibility() {
                 <h3 className="section-title" style={{ fontSize: '1.1rem' }}>Documentation & Interests</h3>
               </div>
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Has Aadhaar:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.has_aadhaar || 'Yes'}</span></li>
-              <li><strong style={{ color: 'var(--text-muted)' }}>Has Bank Account:</strong> <span style={{ float: 'right', fontWeight: 500 }}>{extraFields.has_bank_account || 'Yes'}</span></li>
-              <li>
-                <strong style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>Certificates Available:</strong> 
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+            <div className="parameter-grid">
+              <div className="parameter-block">
+                <span className="parameter-label">Has Aadhaar</span>
+                <span className="parameter-value">{renderValue(extraFields.has_aadhaar)}</span>
+              </div>
+              <div className="parameter-block">
+                <span className="parameter-label">Has Bank Account</span>
+                <span className="parameter-value">{renderValue(extraFields.has_bank_account)}</span>
+              </div>
+              <div className="parameter-block span-2" style={{ alignItems: 'flex-start', gap: '0.625rem' }}>
+                <span className="parameter-label">Certificates Available</span> 
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', width: '100%' }}>
                   {extraFields.certificates && extraFields.certificates.length > 0 ? (
                     extraFields.certificates.map(c => (
                       <span key={c} className="badge badge-primary">{c}</span>
                     ))
                   ) : (
-                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>None selected</span>
+                    <span className="badge badge-empty">None selected</span>
                   )}
                 </div>
-              </li>
-              <li>
-                <strong style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>Scheme Category Interests:</strong> 
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              </div>
+              <div className="parameter-block span-2" style={{ alignItems: 'flex-start', gap: '0.625rem' }}>
+                <span className="parameter-label">Scheme Category Interests</span> 
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', width: '100%' }}>
                   {extraFields.scheme_interest && extraFields.scheme_interest.length > 0 ? (
                     extraFields.scheme_interest.map(i => (
                       <span key={i} className="badge badge-accent">{i}</span>
                     ))
                   ) : (
-                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>None selected</span>
+                    <span className="badge badge-empty">None selected</span>
                   )}
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

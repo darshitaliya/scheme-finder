@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import AccessibilityToolbar from './AccessibilityToolbar';
 import { useAuth } from '../context/AuthContext';
 
 export default function Layout({ children }) {
@@ -30,7 +29,6 @@ export default function Layout({ children }) {
         <main id="main-content" className="main-content-public">
           {children}
         </main>
-        <AccessibilityToolbar />
       </div>
     );
   }
@@ -44,7 +42,6 @@ export default function Layout({ children }) {
           {children}
         </main>
       </div>
-      <AccessibilityToolbar />
     </div>
   );
 }

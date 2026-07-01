@@ -143,19 +143,55 @@ export default function UserProfile() {
   return (
     <main id="main-content" className="eligibility-page">
       <div className="container" style={{ maxWidth: '600px' }}>
-        <div className="eligibility-header animate-fade-in">
-          <h1 className="page-title">
+        <header className="page-header animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '2.5rem' }}>
+          <div className="eligibility-header-badge" style={{ marginBottom: '1.5rem' }}>
+            <FiUser size={12} /> Account Management
+          </div>
+          <h1 className="page-title" style={{ display: 'block', textAlign: 'center' }}>
             {isAdmin ? 'Admin Profile Settings' : 'Registration Details'}
           </h1>
-          <p className="eligibility-subtitle">
+          <p className="eligibility-subtitle" style={{ textAlign: 'center' }}>
             {isAdmin 
               ? 'Manage your administrator credentials and contact details.' 
               : "Manage your account's login credentials and personal identity."}
           </p>
-        </div>
+        </header>
 
         <form onSubmit={handleSubmit} noValidate className="eligibility-form" style={{ maxWidth: '100%' }}>
           <section className="form-section card-static animate-slide-up">
+            {/* User Avatar & Info Header */}
+            <div className="profile-user-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-light)' }}>
+              <div className="profile-avatar" style={{ 
+                width: '72px', 
+                height: '72px', 
+                borderRadius: '50%', 
+                background: 'linear-gradient(135deg, #6366F1 0%, #a78bfa 100%)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                color: '#fff', 
+                fontSize: '1.8rem', 
+                fontWeight: 700,
+                boxShadow: '0 8px 20px rgba(99, 102, 241, 0.25)',
+                flexShrink: 0
+              }}>
+                {formData.full_name ? formData.full_name.trim().split(/\s+/).map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  {formData.full_name || 'User Profile'}
+                </h3>
+                <p style={{ margin: '3px 0 0', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                  @{formData.username}
+                </p>
+                <div style={{ marginTop: '8px' }}>
+                  <span className="status-badge status-yes" style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem' }}>
+                    {isAdmin ? 'Administrator' : 'Verified User'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <div className="section-header" style={{ marginBottom: '1.5rem' }}>
               <div className="section-icon-wrapper section-icon-blue"><FiUser size={20} /></div>
               <div>
@@ -228,7 +264,7 @@ export default function UserProfile() {
                     className={`input-field ${errors.password ? 'error' : ''}`} 
                     value={formData.password} 
                     onChange={handleChange}
-                    placeholder={`Current: ${currentPassword}`}
+                    placeholder="Leave blank to keep current password"
                     style={{ paddingLeft: 40 }} 
                   />
                 </div>

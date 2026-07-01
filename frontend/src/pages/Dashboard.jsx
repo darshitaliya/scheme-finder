@@ -1,12 +1,22 @@
 import { useState, useEffect, useMemo } from 'react';
-import { FiSearch, FiFilter, FiVolume2, FiInbox, FiTrendingUp, FiCheckCircle, FiPercent, FiShield } from 'react-icons/fi';
+import { FiSearch, FiVolume2, FiInbox, FiTrendingUp, FiCheckCircle, FiPercent, FiX } from 'react-icons/fi';
 import SchemeCard from '../components/SchemeCard';
 import TextToSpeech from '../components/TextToSpeech';
 import { useAuth } from '../context/AuthContext';
 import './Dashboard.css';
 
 const API_BASE = 'http://localhost:5000/api';
-const SCHEME_TYPES = ['All', 'Scholarship', 'Pension', 'Assistive Device', 'Employment', 'Skill Training', 'Financial Assistance', 'Other'];
+
+const SCHEME_TYPES = [
+  { label: 'All',                  emoji: '🏠' },
+  { label: 'Scholarship',          emoji: '🎓' },
+  { label: 'Pension',              emoji: '🧓' },
+  { label: 'Assistive Device',     emoji: '♿' },
+  { label: 'Employment',           emoji: '💼' },
+  { label: 'Skill Training',       emoji: '🛠️' },
+  { label: 'Financial Assistance', emoji: '💰' },
+  { label: 'Other',                emoji: '⭐' },
+];
 
 // ═══ SKELETON COMPONENTS ═══
 function SkeletonCard() {
@@ -235,7 +245,7 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="card summary-card">
-          <div className="summary-icon-wrapper" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' }}>
+          <div className="summary-icon-wrapper amber">
             <FiPercent size={24} />
           </div>
           <div className="summary-info">
@@ -254,27 +264,39 @@ export default function Dashboard() {
       {/* Filters and Search */}
       <div className="dashboard-controls card-static">
         <div className="search-bar">
-          <FiSearch className="search-bar-icon" size={18} aria-hidden="true" />
+          <FiSearch className="search-bar-icon" size={17} aria-hidden="true" />
           <input
             type="search"
             className="input-field"
-            placeholder="Search schemes by name, benefits..."
+            placeholder="Search schemes by name, benefits…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="Search eligible schemes"
           />
+          {searchQuery && (
+            <button
+              className="search-clear-btn"
+              onClick={() => setSearchQuery('')}
+              aria-label="Clear search"
+            >
+              <FiX size={15} />
+            </button>
+          )}
         </div>
 
         <div className="filter-scroll" role="tablist" aria-label="Filter by scheme type">
-          {SCHEME_TYPES.map((type) => (
+          {SCHEME_TYPES.map(({ label, emoji }) => (
             <button
-              key={type}
-              className={`filter-chip ${activeFilter === type ? 'active' : ''}`}
-              onClick={() => setActiveFilter(type)}
+              key={label}
+              className={`filter-chip ${activeFilter === label ? 'active' : ''}`}
+              onClick={() => setActiveFilter(label)}
               role="tab"
-              aria-selected={activeFilter === type}
+              aria-selected={activeFilter === label}
+              title={label}
             >
-              {type}
+              <span>{emoji}</span>
+              <span>{label}</span>
+              <span className="chip-dot"></span>
             </button>
           ))}
         </div>
